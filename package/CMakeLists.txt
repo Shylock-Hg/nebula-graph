@@ -254,6 +254,19 @@ install(
         common
 )
 
+install(
+    FILES
+        ${common_source_dir}/resources/date_time_zonespec.csv
+    PERMISSIONS
+        OWNER_WRITE OWNER_READ
+        GROUP_READ
+        WORLD_READ
+    DESTINATION
+        share/resources
+    COMPONENT
+        common
+)
+
 include(CPackage)
 package(${ENABLE_PACK_ONE}
         "nebula-graph"

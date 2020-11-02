@@ -147,10 +147,9 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
-if(TARGET install-storage)
-    add_dependencies(install-all install-storage)
+if(TARGET install-common)
+    add_dependencies(install-all install-common install-storage)
 endif()
-
 
 if (ENABLE_NATIVE)
     message(STATUS "ENABLE_NATIVE is ${ENABLE_NATIVE}")
