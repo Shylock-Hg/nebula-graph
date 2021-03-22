@@ -27,6 +27,7 @@ from tests.common.utils import (
     check_resp,
     response,
 )
+from tests.common.configs import get_delay_time
 from tests.tck.utils.table import dataset, table
 from tests.tck.utils.nbv import murmurhash2
 
@@ -101,8 +102,7 @@ def new_space(request, options, session, graph_spaces):
     create_space(space_desc, session)
     graph_spaces["space_desc"] = space_desc
     graph_spaces["drop_space"] = True
-    # TODO unify the wait time
-    time.sleep(6)
+    time.sleep(get_delay_time())
 
 
 @given(parse('load "{data}" csv data to a new space'))
@@ -143,6 +143,11 @@ def profiling_query(query, graph_spaces, session, request):
 def wait(secs):
     time.sleep(secs)
 
+@given(parse("wait meta data sync"))
+@when(parse("wait meta data sync"))
+@then(parse("wait meta data sync"))
+def wait():
+    time.sleep(get_delay_time())
 
 def line_number(steps, result):
     for step in steps:
