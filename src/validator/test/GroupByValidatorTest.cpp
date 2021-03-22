@@ -76,8 +76,6 @@ TEST_F(GroupByValidatorTest, TestGroupBy) {
             PK::kLeftJoin,
             PK::kProject,
             PK::kGetVertices,
-            PK::kDedup,
-            PK::kProject,
             PK::kProject,
             PK::kGetNeighbors,
             PK::kStart
@@ -106,8 +104,6 @@ TEST_F(GroupByValidatorTest, TestGroupBy) {
             PK::kLeftJoin,
             PK::kProject,
             PK::kGetVertices,
-            PK::kDedup,
-            PK::kProject,
             PK::kProject,
             PK::kGetNeighbors,
             PK::kStart
@@ -131,8 +127,6 @@ TEST_F(GroupByValidatorTest, TestGroupBy) {
             PK::kLeftJoin,
             PK::kProject,
             PK::kGetVertices,
-            PK::kDedup,
-            PK::kProject,
             PK::kProject,
             PK::kGetNeighbors,
             PK::kStart
@@ -157,8 +151,6 @@ TEST_F(GroupByValidatorTest, TestGroupBy) {
             PK::kLeftJoin,
             PK::kProject,
             PK::kGetVertices,
-            PK::kDedup,
-            PK::kProject,
             PK::kProject,
             PK::kGetNeighbors,
             PK::kStart
@@ -183,8 +175,6 @@ TEST_F(GroupByValidatorTest, TestGroupBy) {
             PK::kLeftJoin,
             PK::kProject,
             PK::kGetVertices,
-            PK::kDedup,
-            PK::kProject,
             PK::kProject,
             PK::kGetNeighbors,
             PK::kStart
@@ -220,8 +210,6 @@ TEST_F(GroupByValidatorTest, VariableTest) {
             PK::kLeftJoin,
             PK::kProject,
             PK::kGetVertices,
-            PK::kDedup,
-            PK::kProject,
             PK::kProject,
             PK::kGetNeighbors,
             PK::kStart
@@ -246,8 +234,6 @@ TEST_F(GroupByValidatorTest, VariableTest) {
             PK::kLeftJoin,
             PK::kProject,
             PK::kGetVertices,
-            PK::kDedup,
-            PK::kProject,
             PK::kProject,
             PK::kGetNeighbors,
             PK::kStart
@@ -304,19 +290,21 @@ TEST_F(GroupByValidatorTest, InvalidTest) {
                    "SemanticError: Group `noexist' invalid");
     }
     {
+        // TODO: move to parser UT
         // use sum(*)
         std::string query = "GO FROM \"1\" OVER like YIELD like._dst AS id, $^.person.age AS age "
                             "| GROUP BY $-.id YIELD SUM(*)";
         auto result = checkResult(query);
         EXPECT_EQ(std::string(result.message()),
-                  "SemanticError: Could not apply aggregation function `SUM(*)' on `*`");
+                  "SyntaxError: Could not apply aggregation function on `*` near `SUM'");
     }
     {
+        // TODO: move to parser UT
         // use agg fun has more than two inputs
         std::string query = "GO FROM \"1\" OVER like YIELD like._dst AS id, $^.person.age AS age "
                             "| GROUP BY $-.id YIELD COUNT($-.id, $-.age)";
         auto result = checkResult(query);
-        EXPECT_EQ(std::string(result.message()), "SyntaxError: syntax error near `, $-.age'");
+        EXPECT_EQ(std::string(result.message()), "SyntaxError: Unknown function  near `COUNT'");
     }
     {
         // group col has agg fun

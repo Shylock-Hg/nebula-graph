@@ -495,96 +495,134 @@ TEST(Parser, IndexOperation) {
         std::string query = "CREATE TAG INDEX empty_field_index ON person()";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE TAG INDEX name_index ON person(name)";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE TAG INDEX IF NOT EXISTS name_index ON person(name)";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE TAG INDEX IF NOT EXISTS name_index ON person(name, age)";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE EDGE INDEX IF NOT EXISTS empty_field_index ON service()";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE EDGE INDEX IF NOT EXISTS like_index ON service(like)";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE EDGE INDEX IF NOT EXISTS like_index ON service(like, score)";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE EDGE INDEX IF NOT EXISTS std_index ON t1(c1(10), c2(20))";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE EDGE INDEX IF NOT EXISTS std_index ON t1(c1, c2(20))";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE EDGE INDEX IF NOT EXISTS std_index ON t1(c1(10), c2)";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE TAG INDEX IF NOT EXISTS std_index ON t1(c1(10), c2(20))";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE TAG INDEX IF NOT EXISTS std_index ON t1(c1, c2(20))";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "CREATE TAG INDEX IF NOT EXISTS std_index ON t1(c1(10), c2)";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "DROP TAG INDEX name_index";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "DROP EDGE INDEX like_index";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "DESCRIBE TAG INDEX name_index";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "DESCRIBE EDGE INDEX like_index";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "REBUILD TAG INDEX name_index";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
     {
         std::string query = "REBUILD EDGE INDEX like_index";
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
+        auto& sentence = result.value();
+        EXPECT_EQ(query, sentence->toString());
     }
 }
 
@@ -1849,10 +1887,10 @@ TEST(Parser, GroupBy) {
                             "BIT_OR(DISTINCT $^.person.name ), "
                             "BIT_XOR(DISTINCT $$.person.name ),"
                             "BIT_XOR(DISTINCT $-.name ),"
-                            "F_STD($^.person.name ), "
-                            "F_BIT_AND($^.person.name ), "
-                            "F_BIT_OR($^.person.name ), "
-                            "F_BIT_XOR($^.person.name )";
+                            "STD($^.person.name ), "
+                            "BIT_AND($^.person.name ), "
+                            "BIT_OR($^.person.name ), "
+                            "BIT_XOR($^.person.name )";
 
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
@@ -1884,10 +1922,10 @@ TEST(Parser, GroupBy) {
                             "BIT_OR(DISTINCT $^.person.name ), "
                             "BIT_XOR(DISTINCT $$.person.name ),"
                             "BIT_XOR(DISTINCT $-.name ),"
-                            "F_STD($^.person.name ), "
-                            "F_BIT_AND($^.person.name ), "
-                            "F_BIT_OR($^.person.name ), "
-                            "F_BIT_XOR($^.person.name )";
+                            "STD($^.person.name ), "
+                            "BIT_AND($^.person.name ), "
+                            "BIT_OR($^.person.name ), "
+                            "BIT_XOR($^.person.name )";
 
         auto result = parse(query);
         ASSERT_TRUE(result.ok()) << result.status();
@@ -1907,14 +1945,6 @@ TEST(Parser, GroupBy) {
                             "COUNT($^.person.name )";
         auto result = parse(query);
         ASSERT_FALSE(result.ok());
-    }
-}
-
-TEST(Parser, Return) {
-    {
-        std::string query = "RETURN $A IF $A IS NOT NULL";
-        auto result = parse(query);
-        ASSERT_TRUE(result.ok()) << result.status();
     }
 }
 
