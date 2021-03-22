@@ -16,6 +16,7 @@ from contextlib import closing
 
 NEBULA_START_COMMAND_FORMAT = "bin/nebula-{} --flagfile conf/nebula-{}.conf {}"
 
+from tests.common.configs import get_heartbeat_secs, get_expired_time_factor
 
 class NebulaService(object):
     def __init__(self, build_dir, src_dir, cleanup=True):
@@ -60,9 +61,10 @@ class NebulaService(object):
         shutil.copy(self.build_dir + '/../resources/gflags.json', resources_dir)
 
     def _format_nebula_command(self, name, meta_port, ports, debug_log=True):
-        param_format = "--meta_server_addrs={} --port={} --ws_http_port={} --ws_h2_port={} --heartbeat_interval_secs=1 --expired_time_factor=60"
+        param_format = "--meta_server_addrs={} --port={} --ws_http_port={} --ws_h2_port={} --heartbeat_interval_secs={} --expired_time_factor={}"
         param = param_format.format("127.0.0.1:" + str(meta_port), ports[0],
-                                    ports[1], ports[2])
+                                    ports[1], ports[2],
+                                    get_heartbeat_secs(), get_expired_time_factor())
         if name == 'graphd':
             param += ' --enable_optimizer=true'
             param += ' --enable_authorize=true'

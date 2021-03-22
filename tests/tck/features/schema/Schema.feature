@@ -399,7 +399,7 @@ Feature: Insert string vid of vertex and edge
       CREATE TAG animal(name string, kind string);
       """
     Then the execution should be successful
-    Given wait 3 seconds
+    Given wait meta data sync
     # check result
     When executing query:
       """
@@ -434,7 +434,7 @@ Feature: Insert string vid of vertex and edge
     Then the result should be, in any order:
       | Name       |
       | "test_tag" |
-    Given wait 3 seconds
+    Given wait meta data sync
     # test same tag in different space
     When executing query:
       """
@@ -494,7 +494,7 @@ Feature: Insert string vid of vertex and edge
       ALTER TAG t ADD (description string DEFAULT "none")
       """
     Then the execution should be successful
-    Given wait 3 seconds
+    Given wait meta data sync
     # insert
     When executing query:
       """
@@ -590,7 +590,7 @@ Feature: Insert string vid of vertex and edge
       startTime timestamp DEFAULT 0)
       """
     Then the execution should be successful
-    Given wait 3 seconds
+    Given wait meta data sync
     When executing query:
       """
       INSERT EDGE relation (intimacy) VALUES "person.Tom" -> "person.Marry"@0:(3)

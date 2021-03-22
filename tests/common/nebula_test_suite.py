@@ -45,7 +45,7 @@ T_NULL_UNKNOWN_DIV_BY_ZERO.set_nVal(CommonTtypes.NullType.DIV_BY_ZERO)
 class NebulaTestSuite(object):
     @classmethod
     def set_delay(self):
-        self.delay = get_delay_time(self.client)
+        self.delay = get_delay_time()
 
     # @classmethod
     # def setup_class(self):

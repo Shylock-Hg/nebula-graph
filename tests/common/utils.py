@@ -18,6 +18,7 @@ from nebula2.gclient.net import Session
 from tests.common.csv_import import CSVImporter
 from tests.common.path_value import PathVal
 from tests.common.types import SpaceDesc
+from tests.common.configs import get_delay_time
 
 
 def utf8b(s: str):
@@ -389,7 +390,7 @@ def load_csv_data(
         stmts = ' '.join(map(lambda x: x.strip(), schemas.splitlines()))
         response(sess, stmts)
 
-        time.sleep(3)
+        time.sleep(get_delay_time())
 
         for fd in config["files"]:
             _load_data_from_file(sess, data_dir, fd)
