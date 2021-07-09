@@ -74,7 +74,15 @@ public:
         return if_;
     }
 
+    PlanNode* then() {
+        return if_;
+    }
+
     const PlanNode* otherwise() const {
+        return else_;
+    }
+
+    PlanNode* otherwise() {
         return else_;
     }
 
@@ -113,6 +121,10 @@ public:
     }
 
     const PlanNode* body() const {
+        return body_;
+    }
+
+    PlanNode* body() {
         return body_;
     }
 

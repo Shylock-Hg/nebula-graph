@@ -579,9 +579,57 @@ folly::Future<Status> Executor::error(Status status) const {
 }
 
 void Executor::drop() {
-    for (const auto &inputVar : node()->inputVars()) {
+    if (node()->kind() == PlanNode::Kind::kLoop) {
+        const auto *loopExecutor = static_cast<const LoopExecutor*>(this);
+        const auto *loop = asNode<Loop>(node());
+        if (loopExecutor->finally()) {
+            // TODO(shylock) maybe lead to error in nested Loop
+            // Loop exit, so could drop the used variable in loop
+            drop(loop->body());
+            dropNodeInput(node());
+            return;
+        }
+    }
+    if (node()->inLoop()) {
+        // The node in loop
+        return;
+    }
+    dropNodeInput(node());
+}
+
+void Executor::drop(const PlanNode *branch) {
+    std::stack<const PlanNode*> stack;
+    stack.push(branch);
+    while (!stack.empty()) {
+        const auto *currentNode = stack.top();
+        dropNodeInput(currentNode);
+        stack.pop();
+
+        for (auto dep : currentNode->dependencies()) {
+            stack.push(dep);
+        }
+        switch (currentNode->kind()) {
+            case PlanNode::Kind::kSelect: {
+                auto sel = static_cast<const Select*>(currentNode);
+                stack.push(sel->then());
+                stack.push(sel->otherwise());
+                break;
+            }
+            case PlanNode::Kind::kLoop: {
+                auto loop = static_cast<const Loop*>(currentNode);
+                stack.push(loop->body());
+                break;
+            }
+            default:
+                break;
+        }
+    }
+}
+
+void Executor::dropNodeInput(const PlanNode *node) {
+    for (const auto &inputVar : node->inputVars()) {
         if (inputVar != nullptr) {
-            if (inputVar->lastUser.value() == node()->id()) {
+            if (inputVar->lastUser.value() == node->id()) {
                     ectx_->dropResult(inputVar->name);
             }
         }

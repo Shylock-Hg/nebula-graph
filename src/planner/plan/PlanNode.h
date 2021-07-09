@@ -272,6 +272,14 @@ public:
         return cost_;
     }
 
+    void setInLoop(bool inLoop) {
+        inLoop_ = inLoop;
+    }
+
+    bool inLoop() const {
+        return inLoop_;
+    }
+
 protected:
     PlanNode(QueryContext* qctx, Kind kind);
 
@@ -294,6 +302,8 @@ protected:
     std::vector<const PlanNode*>             dependencies_;
     std::vector<Variable*>                   inputVars_;
     std::vector<Variable*>                   outputVars_;
+    // whether the node in a loop
+    bool                                     inLoop_{false};
 };
 
 std::ostream& operator<<(std::ostream& os, PlanNode::Kind kind);

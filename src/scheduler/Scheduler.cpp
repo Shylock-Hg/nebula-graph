@@ -19,37 +19,40 @@
 namespace nebula {
 namespace graph {
 
-/*static*/ void Scheduler::analyzeLifetime(const PlanNode* root, bool inLoop) {
-    std::stack<std::tuple<const PlanNode*, bool>> stack;
+/*static*/ void Scheduler::analyzeLifetime(PlanNode* root, bool inLoop) {
+    std::stack<std::tuple<PlanNode*, bool>> stack;
     stack.push(std::make_tuple(root, inLoop));
     while (!stack.empty()) {
         const auto& current = stack.top();
-        const auto* currentNode = std::get<0>(current);
+        PlanNode* currentNode = std::get<0>(current);
         const auto currentInLoop = std::get<1>(current);
         for (auto& inputVar : currentNode->inputVars()) {
             if (inputVar != nullptr) {
-                inputVar->setLastUser(
-                    (currentNode->kind() == PlanNode::Kind::kLoop || currentInLoop)
-                        ? -1
-                        : currentNode->id());
+                inputVar->setLastUser(currentNode->id());
             }
+        }
+        if (currentNode->kind() == PlanNode::Kind::kLoop || currentInLoop) {
+            currentNode->setInLoop(true);
         }
         stack.pop();
 
         for (auto dep : currentNode->dependencies()) {
-            stack.push(std::make_tuple(dep, currentInLoop));
+            stack.push(std::make_tuple(const_cast<PlanNode*>(dep), currentInLoop));
         }
         switch (currentNode->kind()) {
             case PlanNode::Kind::kSelect: {
-                auto sel = static_cast<const Select*>(currentNode);
+                auto sel = static_cast<Select*>(currentNode);
                 stack.push(std::make_tuple(sel->then(), currentInLoop));
                 stack.push(std::make_tuple(sel->otherwise(), currentInLoop));
+                // the scheduler will use it
+                sel->outputVarPtr()->setLastUser(-1);
                 break;
             }
             case PlanNode::Kind::kLoop: {
-                auto loop = static_cast<const Loop*>(currentNode);
-                loop->outputVarPtr()->setLastUser(-1);
+                auto loop = static_cast<Loop*>(currentNode);
                 stack.push(std::make_tuple(loop->body(), true));
+                // the scheduler will use it
+                loop->outputVarPtr()->setLastUser(-1);
                 break;
             }
             default:
